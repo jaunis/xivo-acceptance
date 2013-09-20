@@ -36,4 +36,3 @@ Feature: Provd
         Then the device "20" has no config with the following keys:
             | keys         |
             | vlan_enabled |
-        
