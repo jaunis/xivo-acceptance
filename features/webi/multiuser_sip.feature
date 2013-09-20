@@ -1,7 +1,6 @@
-Feature: Provisioning with multiple SIP lines
+Feature: Provisioning a SIP device with multiple users
 
-
-    Scenario: multiline with func keys preconditions
+    Scenario: multiuser with func keys preconditions
         Given I have the following device templates:
             | id         | label       |
             | mytemplate | My Template |
@@ -27,6 +26,21 @@ Feature: Provisioning with multiple SIP lines
             | 20      | 30      | 40           |
             | 21      | 30      | 40           |
 
+    Scenario: Edit the firstname and lastname of a secondary user
+        Given all preconditions are ready
+        Given "Mufasa" has provisionned the device "00:11:22:33:44:55" with line "30"
+        When I update "Simba" with the following parameters:
+            | firstname | lastname |
+            | Lion      | King     |
+        When I synchronize device "00:11:22:33:44:55"
+        Then device "00:11:22:33:44:55" has the following parameters:
+            | caller id | extension |
+            | Mufasa    | 1000      |
+        Then device "00:11:22:33:44:55" has the following func keys:
+            | key | type       | destination | label   | supervision |
+            | 1   | DND        |             | dnd     | enabled     |
+            | 2   | Parking    | 700         | parking | disabled    |
+
     Scenario: Edit a device
         Given all preconditions are ready
         Given "Mufasa" has provisionned the device "00:11:22:33:44:55" with line "30"
@@ -36,7 +50,7 @@ Feature: Provisioning with multiple SIP lines
         When I synchronize device "00:11:22:33:44:55"
         Then the device "00:11:22:33:44:55" has the following parameters:
             | caller id | extension |
-            | Mufasa | 1000      |
+            | Mufasa    | 1000      |
         Then my phone has the following func keys:
             | key | type    | destination | label   | supervision |
             | 1   | DND     |             | dnd     | enabled     |
@@ -47,11 +61,12 @@ Feature: Provisioning with multiple SIP lines
         Given all preconditions are ready
         Given "Mufasa" has provisionned the device "00:11:22:33:44:55" with line "30"
         When I delete device "00:11:22:33:44:55"
-        When I synchronize device "00:11:22:33:44:55"
-        Then device "00:11:22:33:44:55" is in autoprov mode
-        Then device "00:11:22:33:44:55" does not have any func keys
         Then "Mufasa" does not have any devices
         Then "Simba" does not have any devices
+        When I reboot device "00:11:22:33:44:55"
+        Then device "00:11:22:33:44:55" is in autoprov mode
+        Then device "00:11:22:33:44:55" does not have any func keys
+        Then "Mufasa" and "Simba" are still associated to the same line
 
     Scenario: Associate a device to the main user
         Given all preconditions are ready
@@ -59,7 +74,7 @@ Feature: Provisioning with multiple SIP lines
         When I synchronize device "00:11:22:33:44:55"
         Then device "00:11:22:33:44:55" has the following parameters:
             | caller id | extension |
-            | Mufasa | 1000      |
+            | Mufasa    | 1000      |
         Then device "00:11:22:33:44:55" has the following func keys:
             | key | type    | destination | label   | supervision |
             | 1   | DND     |             | dnd     | enabled     |
@@ -80,7 +95,7 @@ Feature: Provisioning with multiple SIP lines
         Then device "00:11:22:33:44:55" is in autoprov mode
         Then device "00:11:22:33:44:55" does not have any func keys
         Then "Mufasa" no longer has any devices
-        Then "Simba" no longer has any devices
+        Then "Mufasa" and "Simba" are still associated to the same line
 
     Scenario: Associate another device to the main user
         Given all preconditions are ready
@@ -110,13 +125,13 @@ Feature: Provisioning with multiple SIP lines
         When I update "Mufasa" with the following parameters:
             | caller id    | extension |
             | Supreme Lion | 1001      |
-        When I add the following fuck keys to "Mufasa"
+        When I add the following func keys to "Mufasa"
             | key | type       | destination | label  | supervision |
             | 3   | Customized | 1000        | custom | enabled     |
         When I synchronize device "00:11:22:33:44:55"
         Then device "00:11:22:33:44:55" has the following parameters:
-            | caller id | extension |
-            | Mufasa | 1001      |
+            | caller id    | extension |
+            | Supreme Lion | 1001      |
         Then device "00:11:22:33:44:55" has the following func keys:
             | key | type       | destination | label   | supervision |
             | 1   | DND        |             | dnd     | enabled     |
@@ -130,8 +145,7 @@ Feature: Provisioning with multiple SIP lines
         When I reset the device "00:11:22:33:44:55" to autoprov
         Then the device with mac "00:11:22:33:44:55" is in autoprov mode
         Then the device with mac "00:11:22:33:44:55" does not have any func keys
-        Then the user "20" no longer has any devices
-        Then the user "21" no longer has any devices
+        Then "Mufasa" no longer has any devices
 
     Scenario: Deleting a line
         Given all preconditions are ready
@@ -147,7 +161,7 @@ Feature: Provisioning with multiple SIP lines
         When I dial "*guest" on device "00:11:22:33:44:55"
         Then device "00:11:22:33:44:55" is in autoprov mode
         Then "Mufasa" no longer has any devices
-        Then "Simba" no longer has any devices
+        Then "Mufasa" and "Simba" are still associated to the same line
 
     Scenario: Synchronizing a device with High Availability
         Given the server is configured for High Availability
