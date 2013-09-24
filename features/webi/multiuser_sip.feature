@@ -1,6 +1,6 @@
 Feature: Provisioning a SIP device with multiple users
 
-    Scenario: multiuser with func keys preconditions
+    Scenario: Multiuser with func keys preconditions
         Given I have the following device templates:
             | id         | label       |
             | mytemplate | My Template |
@@ -26,7 +26,7 @@ Feature: Provisioning a SIP device with multiple users
             | 20      | 30      | 40           |
             | 21      | 30      | 40           |
 
-    Scenario: Edit the firstname and lastname of a secondary user
+    Scenario: Edit the firstname and lastname of a main user
         Given all preconditions are ready
         Given "Mufasa" has provisionned the device "00:11:22:33:44:55" with line "30"
         When I update "Simba" with the following parameters:
@@ -41,7 +41,7 @@ Feature: Provisioning a SIP device with multiple users
             | 1   | DND        |             | dnd     | enabled     |
             | 2   | Parking    | 700         | parking | disabled    |
 
-    Scenario: Edit a device
+    Scenario: Edit the device of a main user
         Given all preconditions are ready
         Given "Mufasa" has provisionned the device "00:11:22:33:44:55" with line "30"
         When I update device "00:11:22:33:44:55" with the following parameters
@@ -57,7 +57,7 @@ Feature: Provisioning a SIP device with multiple users
             | 2   | Parking | 700         | parking | disabled    |
         Then device "00:11:22:33:44:55" can send and receive calls
 
-    Scenario: Delete a device
+    Scenario: Delete the device of the main user
         Given all preconditions are ready
         Given "Mufasa" has provisionned the device "00:11:22:33:44:55" with line "30"
         When I delete device "00:11:22:33:44:55"
@@ -139,7 +139,7 @@ Feature: Provisioning a SIP device with multiple users
             | 3   | Customized | 1000        | custom  | enabled     |
         Then device "00:11:22:33:44:55" can send and receive calls
 
-    Scenario: Reset to autoprov
+    Scenario: Reset to autoprov the device from the main user
         Given all preconditions are ready
         Given the device "00:11:22:33:44:55" is provisioned with the line "30"
         When I reset the device "00:11:22:33:44:55" to autoprov
@@ -147,7 +147,7 @@ Feature: Provisioning a SIP device with multiple users
         Then the device with mac "00:11:22:33:44:55" does not have any func keys
         Then "Mufasa" no longer has any devices
 
-    Scenario: Deleting a line
+    Scenario: Deleting a line from the main user
         Given all preconditions are ready
         Given "Mufasa" has provisionned the device "00:11:22:33:44:55" with line "30"
         When I delete the line used by "Mufasa"
